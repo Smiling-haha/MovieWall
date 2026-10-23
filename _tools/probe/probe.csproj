@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>probe</AssemblyName>
+    <RootNamespace>probe</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\src\MovieWall\Services\DoubanClient.cs" Link="DoubanClient.cs" />
+    <Compile Include="..\..\src\MovieWall\Services\MediaMetadataReader.cs" Link="MediaMetadataReader.cs" />
+    <Compile Include="..\..\src\MovieWall\Services\FileNameParser.cs" Link="FileNameParser.cs" />
+    <Compile Include="..\..\src\MovieWall\Services\Http.cs" Link="Http.cs" />
+    <Compile Include="..\..\src\MovieWall\Services\Log.cs" Link="Log.cs" />
+    <Compile Include="..\..\src\MovieWall\Services\Paths.cs" Link="Paths.cs" />
+    <Compile Include="..\..\src\MovieWall\Common\TextSimilarity.cs" Link="TextSimilarity.cs" />
+  </ItemGroup>
+
+</Project>

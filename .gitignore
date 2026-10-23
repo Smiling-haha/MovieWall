@@ -1,0 +1,42 @@
+# ============================================================
+# MovieWall (.NET 8 / WPF) .gitignore
+# ============================================================
+
+# ---------- 1. .NET 构建产物 ----------
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.userprefs
+.vs/
+.vsconfig
+*.pdb
+*.cache
+project.assets.json
+project.nuget.cache
+
+# ---------- 2. 打包产物 ----------
+*.7z
+*.zip
+*.rar
+/release/
+
+# ---------- 3. 开发过程截图（60 张，21 MB，属开发工件，不公开）----------
+/_shots/
+
+# ---------- 4. 本地数据与日志 ----------
+*.log
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+/cache/
+/_cache/
+
+# ---------- 5. 系统垃圾 ----------
+Thumbs.db
+desktop.ini
+.DS_Store
+*.tmp
+*.bak

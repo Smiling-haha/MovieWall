@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>MovieWall</AssemblyName>
+    <RootNamespace>MovieWall</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <SatelliteResourceLanguages>zh-Hans</SatelliteResourceLanguages>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <Product>MovieWall 光影墙</Product>
+    <AssemblyTitle>MovieWall</AssemblyTitle>
+    <Version>1.0.0</Version>
+    <!-- exe 图标：由 tools/make-icon.py 生成，改图重新跑那个脚本即可 -->
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 同一个 ico 再作为资源打进程序，供窗口标题栏/任务栏使用 -->
+    <Resource Include="Assets\app.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.10" />
+  </ItemGroup>
+
+  <!-- MediaInfo CLI：技术参数探测靠它，随程序一起发布（不打进单文件，保持可替换） -->
+  <ItemGroup>
+    <None Include="..\..\tools\MediaInfo.exe" Link="tools\MediaInfo.exe"
+          CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest"
+          ExcludeFromSingleFile="true" />
+    <None Include="..\..\tools\LIBCURL.DLL" Link="tools\LIBCURL.DLL"
+          CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest"
+          ExcludeFromSingleFile="true" />
+  </ItemGroup>
+
+</Project>

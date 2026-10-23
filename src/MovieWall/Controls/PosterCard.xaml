@@ -1,0 +1,196 @@
+<UserControl x:Class="MovieWall.Controls.PosterCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Background="Transparent"
+             Cursor="Hand"
+             FontFamily="{StaticResource F_UI}">
+
+    <UserControl.Resources>
+        <!-- 角标 / 磁盘标签的统一底 -->
+        <Style x:Key="BadgeBorder" TargetType="Border">
+            <Setter Property="Background" Value="#B3000000" />
+            <Setter Property="CornerRadius" Value="3" />
+            <Setter Property="Padding" Value="5,2" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid x:Name="Host" Background="Transparent">
+
+        <Grid.RenderTransform>
+            <TransformGroup>
+                <ScaleTransform x:Name="CardScale" ScaleX="1" ScaleY="1" />
+                <TranslateTransform x:Name="CardShift" Y="0" />
+            </TransformGroup>
+        </Grid.RenderTransform>
+        <Grid.RenderTransformOrigin>0.5,0.55</Grid.RenderTransformOrigin>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- ============ 海报 ============ -->
+        <Border x:Name="PosterHost" Grid.Row="0" CornerRadius="5" Background="{Binding PlaceholderBrush}">
+            <Grid>
+                <Image x:Name="Poster"
+                       Source="{Binding PosterImage, NotifyOnTargetUpdated=True}"
+                       Stretch="UniformToFill"
+                       Opacity="0"
+                       RenderOptions.BitmapScalingMode="HighQuality">
+                    <Image.Triggers>
+                        <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     To="1" Duration="0:0:0.34">
+                                        <DoubleAnimation.EasingFunction>
+                                            <CubicEase EasingMode="EaseOut" />
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Image.Triggers>
+                </Image>
+
+                <!-- 没刮到海报时的占位 -->
+                <Grid x:Name="Fallback">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding PosterImage}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="18,0">
+                        <TextBlock Text="{Binding Initials}"
+                                   FontSize="44"
+                                   FontWeight="Light"
+                                   Foreground="#30FFFFFF"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="{Binding DisplayTitle}"
+                                   FontSize="11.5"
+                                   Foreground="#7AFFFFFF"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   MaxHeight="50"
+                                   TextTrimming="CharacterEllipsis"
+                                   Margin="0,10,0,0" />
+                    </StackPanel>
+                </Grid>
+
+                <!-- 悬停时的轻微提亮，避免整张图压暗 -->
+                <Border x:Name="HoverVeil" Background="#0DFFFFFF" Opacity="0" IsHitTestVisible="False" />
+
+                <!-- 左上：规格角标（4K / UHD / 1080P） -->
+                <ItemsControl ItemsSource="{Binding Badges}"
+                              HorizontalAlignment="Left" VerticalAlignment="Top"
+                              Margin="7"
+                              Focusable="False">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource BadgeBorder}" Margin="0,0,4,0">
+                                <TextBlock Text="{Binding}"
+                                           FontSize="9"
+                                           FontWeight="SemiBold"
+                                           Foreground="#EDEDEF" />
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- 右上：HDR + 磁盘状态 -->
+                <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="7">
+                    <Border Style="{StaticResource BadgeBorder}"
+                            HorizontalAlignment="Right"
+                            Visibility="{Binding HdrBadge, Converter={StaticResource EmptyToCollapsed}}">
+                        <TextBlock Text="{Binding HdrBadge}"
+                                   FontSize="9"
+                                   FontWeight="SemiBold"
+                                   Foreground="#EDEDEF" />
+                    </Border>
+
+                    <Border Style="{StaticResource BadgeBorder}"
+                            HorizontalAlignment="Right"
+                            Margin="0,4,0,0"
+                            Visibility="{Binding DiskLabel, Converter={StaticResource EmptyToCollapsed}}">
+                        <StackPanel Orientation="Horizontal">
+                            <!-- 小光盘图标 -->
+                            <Grid Width="7" Height="7" Margin="0,0,3,0" VerticalAlignment="Center">
+                                <Ellipse Stroke="#A8A8B0" StrokeThickness="0.9" />
+                                <Ellipse Width="1.8" Height="1.8" Fill="#A8A8B0"
+                                         HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Grid>
+                            <TextBlock Text="{Binding DiskLabel}"
+                                       FontSize="9"
+                                       Foreground="#D8D8DC" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- 离线态 -->
+                <Border x:Name="OfflineMask"
+                        CornerRadius="5"
+                        Background="#D9060607"
+                        IsHitTestVisible="False">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsAvailable}" Value="False">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="⊘" FontSize="20" Foreground="#606068" HorizontalAlignment="Center" />
+                        <TextBlock Text="磁盘已断开" FontSize="10" Foreground="#7E7E88"
+                                   Margin="0,5,0,0" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- ============ 卡片下方文字 ============ -->
+        <StackPanel Grid.Row="1" Margin="1,9,1,0">
+            <TextBlock Text="{Binding DisplayTitle}"
+                       FontSize="12.5"
+                       Foreground="#EDEDEF"
+                       TextTrimming="CharacterEllipsis" />
+
+            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                <TextBlock Text="{Binding CardMeta}"
+                           FontSize="10.5"
+                           Foreground="#6C6C75" />
+
+                <TextBlock Text="  ·  磁盘已断开" FontSize="10.5" Foreground="#4E4E56">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsAvailable}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </StackPanel>
+        </StackPanel>
+
+    </Grid>
+</UserControl>
